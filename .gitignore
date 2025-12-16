@@ -11,6 +11,7 @@ venv/
 *.log
 device_status_log.txt
 data_result.txt
+*.bak
 
 # IDE 配置
 .vscode/
