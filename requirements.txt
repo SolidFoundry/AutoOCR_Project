@@ -1,0 +1,4 @@
+flask
+paddlepaddle
+paddleocr
+requests
