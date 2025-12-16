@@ -1,12 +1,12 @@
-import os
-import re
-import time
-import base64
-import logging
 from flask import Flask, request, jsonify
 from paddleocr import PaddleOCR
+import base64
+import re
+import time
+import logging
+import os
 
-# 1. 基础设置：屏蔽冗余日志
+# 1. 基础设置：屏蔽日志
 logging.getLogger("ppocr").setLevel(logging.ERROR)
 
 app = Flask(__name__)
@@ -16,23 +16,20 @@ device_registry = {}
 
 print("\n" + "="*60)
 print(">>> 🤖 AI 视觉服务 (云控管理 + OCR修复版) 启动中...")
-# 初始化 OCR 模型
-ocr = PaddleOCR(use_textline_orientation=True, lang="ch", show_log=False)
+# 适配 v5 模型的关键参数
+ocr = PaddleOCR(use_textline_orientation=True, lang="ch")
 print(">>> ✅ 模型加载完毕！")
 print("="*60 + "\n")
 
 # ==========================================
-# 🛠️ 辅助功能区 (路径已修正)
+# 🛠️ 辅助功能区
 # ==========================================
 def get_current_script_info():
-    """
-    读取 client/business.js 的版本号和内容
-    会自动去上级目录的 client 文件夹寻找
-    """
+    """读取本地 business.js 的版本号和内容"""
     try:
-        # 获取当前脚本所在目录
+        # ⚠️ 唯一修改的地方：为了适应新目录结构，这里要往上找 client 文件夹
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        # 拼接目标路径: ../client/business.js
+        # 指向 ../client/business.js
         script_path = os.path.join(base_dir, '..', 'client', 'business.js')
         
         with open(script_path, "r", encoding="utf-8") as f:
@@ -43,7 +40,8 @@ def get_current_script_info():
         version = match.group(1) if match else "Unknown"
         return version, content
     except Exception as e:
-        print(f"❌ 读取脚本文件失败: {e}")
+        # 如果找不到文件，打印一下路径方便调试
+        print(f"❌ 找不到脚本文件，请确认位置: {e}")
         return "Error", str(e)
 
 def write_status_log():
@@ -61,6 +59,7 @@ def write_status_log():
 已更新设备数: {updated_count}
 待更新设备数: {total - updated_count}
 --------------------------------------------
+设备详情:
 """
     for dev_id, info in device_registry.items():
         log_content += f"[{dev_id}] \t版本: {info.get('version')} \t最后活跃: {info.get('last_seen')}\n"
@@ -85,13 +84,12 @@ class ExtractConfig:
 def clean_noise_text(text_list):
     cleaned = []
     for t in text_list:
-        # 去除单个字母的干扰
         if len(t) == 1 and re.match(r"[a-zA-Z]", t):
             continue 
         cleaned.append(t)
     return cleaned
 
-def universal_extract(text_list):
+def universal_extract(text_list, is_test=False):
     # 1. 降噪
     clean_list = clean_noise_text(text_list)
     # 2. 拼接
@@ -118,6 +116,7 @@ def universal_extract(text_list):
 # 📡 路由接口区
 # ==========================================
 
+# 【新增接口】Loader 请求下载脚本 (版本比对逻辑)
 @app.route('/get_latest_script', methods=['GET'])
 def get_latest_script():
     server_version, content = get_current_script_info()
@@ -130,6 +129,7 @@ def get_latest_script():
     else:
         return jsonify({"status": "update", "version": server_version, "code": content})
 
+# 【新增接口】脚本启动时汇报状态
 @app.route('/report_status', methods=['POST'])
 def report_status():
     data = request.json
@@ -145,6 +145,7 @@ def report_status():
     print(f"📶 设备上线: {dev_id} (Ver: {version})")
     return {"code": 200}
 
+# 【核心接口】OCR 识别 (保持原样)
 @app.route('/ocr_check', methods=['POST'])
 def ocr_check():
     try:
@@ -152,7 +153,6 @@ def ocr_check():
         img_base64 = data.get('image')
         device_id = data.get('device_id', 'Unknown')
         
-        # 这里的图片可以根据需求改为保存到 static 文件夹
         filename = f"scan_{device_id}.jpg"
         with open(filename, 'wb') as f:
             f.write(base64.b64decode(img_base64))
@@ -160,13 +160,17 @@ def ocr_check():
         # 1. 识别
         result = ocr.predict(filename)
         txts = []
+        scores = []
         if result and len(result) > 0:
             item = result[0]
-            txts = [line[1][0] for line in item] if item else []
+            txts = item.get("rec_texts", [])
+            scores = item.get("rec_scores", [])
             
-            print(f"\n--- 📸 设备 [{device_id}] OCR 结果 ---")
-            print(txts)
-            print("-" * 30)
+            # 打印详细日志
+            print(f"\n--- 📸 设备 [{device_id}] OCR原始结果 ---")
+            for t, s in zip(txts, scores):
+                print(f"{s:.4f} | {t}")
+            print("-" * 40)
             
         # 2. 提取
         found, contacts = universal_extract(txts)

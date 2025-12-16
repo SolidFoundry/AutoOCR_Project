@@ -5,9 +5,7 @@ __pycache__/
 venv/
 .env
 
-# 临时图片和日志
-*.jpg
-*.png
+# 临时日志
 *.log
 device_status_log.txt
 data_result.txt
