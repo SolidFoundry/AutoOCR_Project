@@ -83,7 +83,7 @@ AutoOCR_Project/
 
 ```bash
 # 克隆项目
-git clone https://github.com/SolidFoundry/AutoOCR_Project.git
+git clone https://github.com/yourusername/AutoOCR_Project.git
 cd AutoOCR_Project
 
 # 安装依赖
@@ -273,9 +273,80 @@ console.log("调试信息");
 
 ---
 
+## 📝 更新日志
+
+### v2.1.2 - 2024.12.16
+- ✨ 优化项目目录结构
+- 🔧 完善 GitHub 仓库配置
+- 📚 添加详细的文档说明
+
+### v2.0.0 - 2024.12.15
+- 🚀 引入 Loader 热更新机制
+- 🔥 实现脚本自动版本检测
+- 📡 添加设备状态上报功能
+- 🛠️ 开发一键部署工具
+
+### v1.0.0 - 2024.12.10
+- 🎉 项目初始化
+- 👁️ 集成 PaddleOCR 识别引擎
+- 📱 实现基础截图和 OCR 功能
+- 🔗 建立端云通信协议
+
+## 🗺️ 开发路线图
+
+### 🎯 即将推出的功能
+- [ ] **Web 管理界面**: 可视化设备管理面板
+- [ ] **批量任务调度**: 支持多设备并行执行
+- [ ] **脚本模板市场**: 预置常用自动化场景
+- [ ] **实时日志流**: WebSocket 实时日志推送
+- [ ] **API 接口开放**: RESTful API 支持第三方集成
+
+### 🚀 长期规划
+- [ ] **AI 辅助脚本生成**: GPT 集成，自然语言转脚本
+- [ ] **云原生部署**: Docker 容器化支持
+- [ ] **iOS 端支持**: 扩展到 iOS 平台
+- [ ] **企业级功能**: 用户管理、权限控制、审计日志
+
+## 🤝 贡献指南
+
+我们欢迎所有形式的贡献！
+
+### 📋 如何贡献
+1. Fork 本项目
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 创建 Pull Request
+
+### 💡 贡献方向
+- 🐛 Bug 修复
+- ✨ 新功能开发
+- 📚 文档完善
+- 🎨 UI/UX 改进
+- ⚡ 性能优化
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
 ## 🙏 致谢
 
 - [AutoX.js](https://github.com/kkevsekk1/AutoX) - 强大的安卓自动化框架
 - [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) - 高效的 OCR 识别引擎
 - [Flask](https://github.com/pallets/flask) - 轻量级 Web 框架
 
+## 📞 联系方式
+
+- 📧 Email: [your-email@example.com]
+- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/AutoOCR_Project/issues)
+- 💬 Discussion: [GitHub Discussions](https://github.com/yourusername/AutoOCR_Project/discussions)
+
+---
+
+<div align="center">
+
+**⭐ 如果这个项目对你有帮助，请给个 Star 支持一下！**
+
+Made with ❤️ by [Your Name](https://github.com/yourusername)
+
+</div>
